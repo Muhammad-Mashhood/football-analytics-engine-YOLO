@@ -81,15 +81,15 @@ export default function ResultsPage() {
           <h2 className="font-heading font-bold text-text-primary text-2xl tracking-tight mb-1">Match Analysis Complete</h2>
           <p className="text-text-secondary text-sm font-mono">JOB_{jobId?.slice(0, 8).toUpperCase()}</p>
         </div>
-        {job.results?.output_video && (
-          <a
-            href={job.results.output_video}
-            download
-            className="flex items-center gap-2 px-4 py-2 rounded text-sm font-bold text-[#002203] bg-btn-primary"
-          >
-            <Download size={14} /> Download Video
-          </a>
-        )}
+            {job.results?.output_video && (
+              <a
+                href={job.results.output_video}
+                download
+                className="flex items-center gap-2 px-4 py-2 rounded text-sm font-bold text-[#f5fff6] bg-btn-primary"
+              >
+                <Download size={14} /> Download Video
+              </a>
+            )}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">

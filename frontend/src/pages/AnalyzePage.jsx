@@ -35,7 +35,7 @@ export default function AnalyzePage() {
         },
       })
       toast.success('Video queued for processing')
-      navigate(`/results/${res.data.job_id}`)
+      navigate(`/app/results/${res.data.job_id}`)
     } catch {
       toast.error('Upload failed')
     } finally {
@@ -85,7 +85,7 @@ export default function AnalyzePage() {
               <div className="flex flex-wrap justify-center gap-4">
                 <button
                   type="button"
-                  className="px-8 py-3 rounded font-bold text-[#002203] bg-btn-primary shadow-glow-green text-sm hover:opacity-90 transition-opacity"
+                  className="px-8 py-3 rounded font-bold text-[#f5fff6] bg-btn-primary shadow-glow-green text-sm hover:opacity-90 transition-opacity"
                 >
                   Select Files
                 </button>
@@ -125,7 +125,7 @@ export default function AnalyzePage() {
               ) : (
                 <button
                   onClick={handleUpload}
-                  className="w-full py-4 rounded font-bold text-[#002203] bg-btn-primary shadow-glow-green hover:opacity-90 transition-opacity font-heading text-lg"
+                  className="w-full py-4 rounded font-bold text-[#f5fff6] bg-btn-primary shadow-glow-green hover:opacity-90 transition-opacity font-heading text-lg"
                 >
                   Start Analysis
                 </button>

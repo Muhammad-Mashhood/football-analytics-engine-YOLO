@@ -1,10 +1,12 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
-import { LayoutDashboard, Upload, Zap, LogOut } from 'lucide-react'
+import { LayoutDashboard, Upload, Cpu, Settings, Zap, HelpCircle, LogOut } from 'lucide-react'
 
 const links = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/analyze', label: 'Uploads', icon: Upload },
+  { to: '/app', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/app/analyze', label: 'Uploads', icon: Upload },
+  { to: '/app/models', label: 'Models', icon: Cpu },
+  { to: '/app/settings', label: 'Settings', icon: Settings },
 ]
 
 export default function Sidebar() {
@@ -38,7 +40,7 @@ export default function Sidebar() {
           <NavLink
             key={to}
             to={to}
-            end={to === '/'}
+            end={to === '/app'}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded text-sm font-medium transition-colors ${
                 isActive
@@ -55,11 +57,14 @@ export default function Sidebar() {
 
       <div className="border-t border-border-medium p-4 flex flex-col gap-2">
         <button
-          onClick={() => navigate('/analyze')}
-          className="w-full py-3 rounded text-sm font-bold text-[#002203] bg-btn-primary flex items-center justify-center gap-2 shadow-glow-green hover:opacity-90 transition-opacity"
+          onClick={() => navigate('/app/analyze')}
+          className="w-full py-3 rounded text-sm font-bold text-[#f5fff6] bg-btn-primary flex items-center justify-center gap-2 shadow-glow-green hover:opacity-90 transition-opacity"
         >
           <Zap size={16} />
           Start Processing
+        </button>
+        <button className="flex items-center gap-3 px-4 py-2 text-xs text-text-muted hover:text-text-primary transition-colors">
+          <HelpCircle size={12} /> Help
         </button>
         <button
           onClick={handleLogout}

@@ -31,7 +31,7 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       await register(form.email, form.username, form.password, form.password2)
-      navigate('/')
+      navigate('/app')
     } catch (err) {
       toast.error(getApiErrorMessage(err, 'Registration failed'))
     } finally {
@@ -80,7 +80,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded font-bold text-[#002203] bg-btn-primary shadow-glow-green hover:opacity-90 transition-opacity mt-2 disabled:opacity-50"
+              className="w-full py-3 rounded font-bold text-[#f5fff6] bg-btn-primary shadow-glow-green hover:opacity-90 transition-opacity mt-2 disabled:opacity-50"
             >
               {loading ? 'Creating Access...' : 'Create Account'}
             </button>

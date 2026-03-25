@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Upload, Plus } from 'lucide-react'
 import api from '../lib/api'
+import { useAuthStore } from '../store/authStore'
 
 const statusConfig = {
   completed: { color: '#00ff41', label: 'Completed', dot: '#00ff41' },
@@ -11,12 +12,30 @@ const statusConfig = {
   failed: { color: '#ffb4ab', label: 'Failed', dot: '#ffb4ab' },
 }
 
+function formatDuration(job) {
+  const started = job.started_at ? new Date(job.started_at).getTime() : null
+  if (!started) return '--:--'
+
+  const ended = job.completed_at ? new Date(job.completed_at).getTime() : Date.now()
+  const totalSeconds = Math.max(0, Math.floor((ended - started) / 1000))
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  }
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
 export default function DashboardPage() {
   const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user)
 
   const { data: jobs = [], isLoading } = useQuery({
-    queryKey: ['jobs'],
+    queryKey: ['jobs', user?.id],
     queryFn: () => api.get('/api/jobs/').then((r) => r.data),
+    enabled: !!user,
     refetchInterval: 5000,
   })
 
@@ -53,8 +72,8 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading font-bold text-text-primary text-xl tracking-tight">Recent Processed Streams</h2>
           <button
-            onClick={() => navigate('/analyze')}
-            className="flex items-center gap-2 px-4 py-2 rounded text-xs font-bold text-[#002203] bg-btn-primary"
+            onClick={() => navigate('/app/analyze')}
+            className="flex items-center gap-2 px-4 py-2 rounded text-xs font-bold text-[#f5fff6] bg-btn-primary"
           >
             <Upload size={12} /> New Upload
           </button>
@@ -76,7 +95,7 @@ export default function DashboardPage() {
               <Upload size={32} className="text-[rgba(226,227,224,0.2)] mx-auto mb-3" />
               <p className="text-text-secondary text-sm">No sessions yet</p>
               <button
-                onClick={() => navigate('/analyze')}
+                onClick={() => navigate('/app/analyze')}
                 className="mt-4 text-accent text-xs uppercase tracking-widest hover:underline"
               >
                 Upload your first video
@@ -102,7 +121,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <span className="font-mono text-text-secondary text-sm">--:--</span>
+                  <span className="font-mono text-text-secondary text-sm">{formatDuration(job)}</span>
 
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: sc.dot }} />
@@ -116,7 +135,7 @@ export default function DashboardPage() {
                   <div>
                     {job.status === 'completed' && (
                       <button
-                        onClick={() => navigate(`/results/${job.id}`)}
+                        onClick={() => navigate(`/app/results/${job.id}`)}
                         className="text-accent text-[10px] uppercase tracking-widest font-bold hover:underline"
                       >
                         View Analytics
@@ -131,10 +150,10 @@ export default function DashboardPage() {
       </div>
 
       <button
-        onClick={() => navigate('/analyze')}
+        onClick={() => navigate('/app/analyze')}
         className="fixed bottom-8 right-6 lg:right-10 w-14 h-14 lg:w-16 lg:h-16 rounded-xl bg-btn-primary shadow-glow-green-lg flex items-center justify-center hover:opacity-90 transition-opacity z-50"
       >
-        <Plus size={20} className="text-[#002203]" />
+        <Plus size={20} className="text-[#f5fff6]" />
       </button>
     </div>
   )

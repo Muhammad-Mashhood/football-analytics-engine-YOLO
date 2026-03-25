@@ -28,8 +28,17 @@ export const useAuthStore = create(
         set({ user: res.data.user, token: res.data.access, refresh: res.data.refresh })
       },
 
-      loginGitHub: async (code) => {
-        const res = await api.post('/api/auth/github/', { code })
+      loginGoogleCode: async (code, redirectUri) => {
+        const payload = { code }
+        if (redirectUri) payload.redirect_uri = redirectUri
+        const res = await api.post('/api/auth/google/', payload)
+        set({ user: res.data.user, token: res.data.access, refresh: res.data.refresh })
+      },
+
+      loginGitHub: async (code, redirectUri) => {
+        const payload = { code }
+        if (redirectUri) payload.redirect_uri = redirectUri
+        const res = await api.post('/api/auth/github/', payload)
         set({ user: res.data.user, token: res.data.access, refresh: res.data.refresh })
       },
 

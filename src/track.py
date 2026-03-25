@@ -21,15 +21,15 @@ from ultralytics import YOLO
 
 def create_compatible_video_writer(path: Path, fps: int, size: tuple[int, int]):
     """Create a VideoWriter with the most browser-friendly codec available."""
-    # Prefer codecs that modern browsers can decode in MP4.
-    codec_candidates = ['avc1', 'H264', 'mp4v']
+    # Prefer mp4v first to avoid OpenH264 runtime dependency issues; we transcode later.
+    codec_candidates = ['mp4v', 'avc1', 'H264']
     for codec in codec_candidates:
         writer = cv2.VideoWriter(str(path), cv2.VideoWriter_fourcc(*codec), fps, size)
         if writer.isOpened():
             print(f'Video writer codec selected: {codec}')
             return writer
         writer.release()
-    raise RuntimeError('Could not open video writer with avc1/H264/mp4v codecs')
+    raise RuntimeError('Could not open video writer with mp4v/avc1/H264 codecs')
 
 # ── paths ──────────────────────────────────────────────────────────────────────
 ROOT       = Path(__file__).resolve().parents[1]

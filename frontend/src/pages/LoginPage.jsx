@@ -23,16 +23,37 @@ export default function LoginPage() {
   const { login } = useAuthStore()
   const navigate = useNavigate()
   const githubClientId = import.meta.env.VITE_GITHUB_CLIENT_ID
-  const googleOauthUrl = import.meta.env.VITE_GOOGLE_OAUTH_URL
-  const hasGitHubOAuth = !!githubClientId && githubClientId !== 'your_github_client_id'
-  const hasGoogleOAuth = !!googleOauthUrl && googleOauthUrl.includes('client_id=')
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  const googleRedirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/auth/google/callback`
+  const githubRedirectUri = import.meta.env.VITE_GITHUB_REDIRECT_URI || `${window.location.origin}/auth/github/callback`
+  const hasGitHubOAuth = !!githubClientId
+  const hasGoogleOAuth = !!googleClientId
+
+  const googleOauthUrl = hasGoogleOAuth
+    ? `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
+        client_id: googleClientId,
+        redirect_uri: googleRedirectUri,
+        response_type: 'code',
+        scope: 'openid email profile',
+        access_type: 'online',
+        prompt: 'select_account',
+      })}`
+    : '#'
+
+  const githubOauthUrl = hasGitHubOAuth
+    ? `https://github.com/login/oauth/authorize?${new URLSearchParams({
+        client_id: githubClientId,
+        scope: 'user:email',
+        redirect_uri: githubRedirectUri,
+      })}`
+    : '#'
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     try {
       await login(email, password)
-      navigate('/')
+      navigate('/app')
     } catch (err) {
       toast.error(getApiErrorMessage(err, 'Invalid credentials'))
     } finally {
@@ -96,7 +117,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded font-bold text-[#002203] bg-btn-primary shadow-glow-green hover:opacity-90 transition-opacity mt-2 disabled:opacity-50"
+              className="w-full py-3 rounded font-bold text-[#f5fff6] bg-btn-primary shadow-glow-green hover:opacity-90 transition-opacity mt-2 disabled:opacity-50"
             >
               {loading ? 'Authenticating...' : 'Access System'}
             </button>
@@ -128,7 +149,7 @@ export default function LoginPage() {
 
             {hasGitHubOAuth ? (
               <a
-                href={`https://github.com/login/oauth/authorize?client_id=${githubClientId}&scope=user:email`}
+                href={githubOauthUrl}
                 className="flex items-center justify-center gap-3 py-3 rounded border border-border-strong bg-bg-muted text-text-primary text-sm font-medium hover:border-green-dim3 transition-colors"
               >
                 Continue with GitHub

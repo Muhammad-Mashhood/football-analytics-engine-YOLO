@@ -32,7 +32,7 @@ services:
     environment:
       DB_HOST: postgres
       REDIS_URL: redis://redis:6379/0
-      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,${EC2_PUBLIC_IP:-127.0.0.1}"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,django,frontend,${EC2_PUBLIC_IP:-127.0.0.1},${EC2_PUBLIC_DNS:-}"
     volumes:
       - ./uploads:/app/uploads
       - ./outputs:/app/outputs
@@ -104,6 +104,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+        VITE_GITHUB_CLIENT_ID: ${VITE_GITHUB_CLIENT_ID:-}
+        VITE_GOOGLE_REDIRECT_URI: ${VITE_GOOGLE_REDIRECT_URI:-}
+        VITE_GITHUB_REDIRECT_URI: ${VITE_GITHUB_REDIRECT_URI:-}
     ports:
       - "80:80"
     depends_on:

@@ -1,35 +1,24 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 
 const PHASES = [
-  { p: 0.08, title: 'Set Position', text: 'Kicker reads the wall and plants his support foot.' },
-  { p: 0.24, title: 'First Step', text: 'Measured run-up begins with controlled acceleration.' },
-  { p: 0.4, title: 'Second Step', text: 'Body angle opens for curl and lift.' },
-  { p: 0.58, title: 'Contact', text: 'Boot meets the lower half of the ball for launch.' },
-  { p: 0.78, title: 'Strike Through', text: 'Follow-through directs spin and trajectory.' },
-  { p: 0.95, title: 'Ball Flight', text: 'The shot rises and bends toward the top corner.' },
+  { at: 0.04, title: 'Set Position', text: 'Kicker reads the wall and plants his support foot.' },
+  { at: 0.2, title: 'First Step', text: 'Measured run-up begins with controlled acceleration.' },
+  { at: 0.36, title: 'Second Step', text: 'Body angle opens for curl and lift.' },
+  { at: 0.54, title: 'Touch Ball', text: 'Final setup touch aligns the strike window.' },
+  { at: 0.72, title: 'Strike', text: 'Boot drives through the ball with spin and lift.' },
+  { at: 0.9, title: 'Ball Flight', text: 'Shot rises and bends toward the top corner.' },
 ]
-
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n))
-}
 
 export default function HomePage() {
   const token = useAuthStore((s) => s.token)
-  const wrapperRef = useRef(null)
   const videoRef = useRef(null)
-  const rafRef = useRef(0)
-  const readyRef = useRef(false)
-  const [progress, setProgress] = useState(0)
-
-  const activePhase = useMemo(() => {
-    let phase = PHASES[0]
-    for (const p of PHASES) {
-      if (progress >= p.p) phase = p
-    }
-    return phase
-  }, [progress])
+  const sectionRefs = useRef([])
+  const durationRef = useRef(0)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [videoReady, setVideoReady] = useState(false)
+  const activePhase = PHASES[activeIndex]
 
   useEffect(() => {
     const video = videoRef.current
@@ -37,51 +26,58 @@ export default function HomePage() {
 
     video.pause()
     const onLoaded = () => {
-      readyRef.current = true
+      durationRef.current = video.duration || 0
+      setVideoReady(true)
+      video.currentTime = Math.min(0.001, durationRef.current || 0)
+    }
+
+    const onError = () => {
+      setVideoReady(false)
     }
 
     video.addEventListener('loadedmetadata', onLoaded)
+    video.addEventListener('error', onError)
+
     return () => {
       video.removeEventListener('loadedmetadata', onLoaded)
+      video.removeEventListener('error', onError)
     }
   }, [])
 
   useEffect(() => {
-    const onScroll = () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-
-      rafRef.current = requestAnimationFrame(() => {
-        const container = wrapperRef.current
-        const video = videoRef.current
-        if (!container || !video) return
-
-        const rect = container.getBoundingClientRect()
-        const total = container.offsetHeight - window.innerHeight
-        if (total <= 0) return
-
-        const scrolled = clamp(-rect.top, 0, total)
-        const p = scrolled / total
-        setProgress(p)
-
-        if (!readyRef.current || !video.duration || Number.isNaN(video.duration)) return
-
-        const targetTime = p * video.duration
-        if (Math.abs(video.currentTime - targetTime) > 0.033) {
-          video.currentTime = targetTime
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let best = null
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          if (!best || entry.intersectionRatio > best.intersectionRatio) {
+            best = entry
+          }
         }
-      })
-    }
+        if (!best) return
+        const idx = Number(best.target.getAttribute('data-phase-index'))
+        if (!Number.isNaN(idx)) setActiveIndex(idx)
+      },
+      { threshold: [0.45, 0.6, 0.75] }
+    )
 
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
+    sectionRefs.current.forEach((el) => el && observer.observe(el))
 
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
+      observer.disconnect()
     }
   }, [])
+
+  useEffect(() => {
+    const video = videoRef.current
+    const duration = durationRef.current
+    if (!video || !videoReady || !duration) return
+
+    const targetTime = PHASES[activeIndex].at * duration
+    if (Number.isFinite(targetTime) && Math.abs(video.currentTime - targetTime) > 0.02) {
+      video.currentTime = targetTime
+    }
+  }, [activeIndex, videoReady])
 
   return (
     <div className="bg-bg text-text-primary min-h-screen">
@@ -120,16 +116,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section ref={wrapperRef} className="relative h-[520vh]">
-        <div className="sticky top-0 h-screen overflow-hidden border-y border-border-medium bg-bg-dark">
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            src="/scroll.mp4"
-            playsInline
-            muted
-            preload="auto"
-          />
+      <section className="relative grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="lg:sticky lg:top-0 h-screen overflow-hidden border-y border-border-medium bg-bg-dark">
+          <video ref={videoRef} className="w-full h-full object-cover" src="/scroll.mp4" playsInline muted preload="auto" />
 
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,11,10,0.65)_0%,rgba(8,11,10,0.18)_40%,rgba(8,11,10,0.7)_100%)]" />
 
@@ -139,10 +128,35 @@ export default function HomePage() {
               <h4 className="font-heading font-bold text-2xl text-text-primary mb-2">{activePhase.title}</h4>
               <p className="text-text-secondary text-sm">{activePhase.text}</p>
               <div className="mt-4 h-1.5 bg-bg-elevated rounded-full overflow-hidden">
-                <div className="h-full bg-btn-primary" style={{ width: `${Math.round(progress * 100)}%` }} />
+                <div className="h-full bg-btn-primary" style={{ width: `${Math.round(((activeIndex + 1) / PHASES.length) * 100)}%` }} />
               </div>
             </div>
           </div>
+
+          {!videoReady && (
+            <div className="absolute top-4 left-4 right-4 bg-[rgba(20,20,20,0.7)] border border-border-strong rounded px-3 py-2 text-xs text-text-secondary">
+              Loading scroll video...
+            </div>
+          )}
+        </div>
+
+        <div className="bg-bg min-h-[600vh]">
+          {PHASES.map((phase, idx) => (
+            <div
+              key={phase.title}
+              ref={(el) => {
+                sectionRefs.current[idx] = el
+              }}
+              data-phase-index={idx}
+              className="h-screen flex items-center px-6 lg:px-10"
+            >
+              <div className={`w-full border rounded-xl p-6 transition-colors ${idx === activeIndex ? 'border-accent bg-green-dim' : 'border-border-medium bg-bg-card'}`}>
+                <p className="text-[10px] uppercase tracking-widest text-accent-cyan mb-2">Step {idx + 1}</p>
+                <h3 className="font-heading font-bold text-3xl mb-2">{phase.title}</h3>
+                <p className="text-text-secondary">{phase.text}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -150,7 +164,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {PHASES.map((phase) => (
             <div key={phase.title} className="bg-bg-card border border-border-default rounded-lg p-4">
-              <p className="text-[10px] uppercase tracking-widest text-accent-cyan mb-1">{Math.round(phase.p * 100)}%</p>
+              <p className="text-[10px] uppercase tracking-widest text-accent-cyan mb-1">{Math.round(phase.at * 100)}%</p>
               <h5 className="font-heading font-bold text-text-primary mb-2">{phase.title}</h5>
               <p className="text-xs text-text-secondary">{phase.text}</p>
             </div>

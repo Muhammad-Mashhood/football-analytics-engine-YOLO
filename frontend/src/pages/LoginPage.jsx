@@ -53,7 +53,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(email, password)
-      navigate('/app')
+      navigate('/')
     } catch (err) {
       toast.error(getApiErrorMessage(err, 'Invalid credentials'))
     } finally {

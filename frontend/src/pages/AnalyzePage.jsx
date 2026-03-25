@@ -35,7 +35,7 @@ export default function AnalyzePage() {
         },
       })
       toast.success('Video queued for processing')
-      navigate(`/app/results/${res.data.job_id}`)
+      navigate(`/results/${res.data.job_id}`)
     } catch {
       toast.error('Upload failed')
     } finally {

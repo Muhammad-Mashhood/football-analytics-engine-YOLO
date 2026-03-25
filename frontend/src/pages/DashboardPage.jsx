@@ -72,7 +72,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading font-bold text-text-primary text-xl tracking-tight">Recent Processed Streams</h2>
           <button
-            onClick={() => navigate('/app/analyze')}
+            onClick={() => navigate('/analyze')}
             className="flex items-center gap-2 px-4 py-2 rounded text-xs font-bold text-[#f5fff6] bg-btn-primary"
           >
             <Upload size={12} /> New Upload
@@ -95,7 +95,7 @@ export default function DashboardPage() {
               <Upload size={32} className="text-[rgba(226,227,224,0.2)] mx-auto mb-3" />
               <p className="text-text-secondary text-sm">No sessions yet</p>
               <button
-                onClick={() => navigate('/app/analyze')}
+                onClick={() => navigate('/analyze')}
                 className="mt-4 text-accent text-xs uppercase tracking-widest hover:underline"
               >
                 Upload your first video
@@ -135,7 +135,7 @@ export default function DashboardPage() {
                   <div>
                     {job.status === 'completed' && (
                       <button
-                        onClick={() => navigate(`/app/results/${job.id}`)}
+                        onClick={() => navigate(`/results/${job.id}`)}
                         className="text-accent text-[10px] uppercase tracking-widest font-bold hover:underline"
                       >
                         View Analytics
@@ -150,7 +150,7 @@ export default function DashboardPage() {
       </div>
 
       <button
-        onClick={() => navigate('/app/analyze')}
+        onClick={() => navigate('/analyze')}
         className="fixed bottom-8 right-6 lg:right-10 w-14 h-14 lg:w-16 lg:h-16 rounded-xl bg-btn-primary shadow-glow-green-lg flex items-center justify-center hover:opacity-90 transition-opacity z-50"
       >
         <Plus size={20} className="text-[#f5fff6]" />

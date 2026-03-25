@@ -3,10 +3,10 @@ import { useAuthStore } from '../store/authStore'
 import { LayoutDashboard, Upload, Cpu, Settings, Zap, HelpCircle, LogOut } from 'lucide-react'
 
 const links = [
-  { to: '/app', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/app/analyze', label: 'Uploads', icon: Upload },
-  { to: '/app/models', label: 'Models', icon: Cpu },
-  { to: '/app/settings', label: 'Settings', icon: Settings },
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/analyze', label: 'Uploads', icon: Upload },
+  { to: '/models', label: 'Models', icon: Cpu },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
 export default function Sidebar() {
@@ -40,7 +40,7 @@ export default function Sidebar() {
           <NavLink
             key={to}
             to={to}
-            end={to === '/app'}
+            end={to === '/'}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded text-sm font-medium transition-colors ${
                 isActive
@@ -57,7 +57,7 @@ export default function Sidebar() {
 
       <div className="border-t border-border-medium p-4 flex flex-col gap-2">
         <button
-          onClick={() => navigate('/app/analyze')}
+          onClick={() => navigate('/analyze')}
           className="w-full py-3 rounded text-sm font-bold text-[#f5fff6] bg-btn-primary flex items-center justify-center gap-2 shadow-glow-green hover:opacity-90 transition-opacity"
         >
           <Zap size={16} />

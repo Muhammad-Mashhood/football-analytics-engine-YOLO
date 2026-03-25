@@ -7,17 +7,17 @@ import api from '../lib/api'
 import { useAuthStore } from '../store/authStore'
 
 const pageTitles = {
-  '/app': 'Dashboard',
-  '/app/analyze': 'Video Processing Unit',
-  '/app/models': 'Model Management',
-  '/app/settings': 'Settings',
+  '/': 'Dashboard',
+  '/analyze': 'Video Processing Unit',
+  '/models': 'Model Management',
+  '/settings': 'Settings',
 }
 
 export default function TopBar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
-  const title = pageTitles[pathname] || (pathname.startsWith('/app/results/') ? 'Results' : 'Dashboard')
+  const title = pageTitles[pathname] || (pathname.startsWith('/results/') ? 'Results' : 'Dashboard')
   const [panelOpen, setPanelOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const [notifications, setNotifications] = useState([])
@@ -110,7 +110,7 @@ export default function TopBar() {
                 <button
                   key={n.id}
                   onClick={() => {
-                    navigate(`/app/results/${n.jobId}`)
+                    navigate(`/results/${n.jobId}`)
                     setPanelOpen(false)
                   }}
                   className="w-full text-left px-4 py-3 border-b border-border-default hover:bg-green-dim transition-colors"

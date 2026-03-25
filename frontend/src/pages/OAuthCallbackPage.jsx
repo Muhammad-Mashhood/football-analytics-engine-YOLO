@@ -46,7 +46,7 @@ export default function OAuthCallbackPage({ provider }) {
           const redirectUri = import.meta.env.VITE_GITHUB_REDIRECT_URI || `${window.location.origin}/auth/github/callback`
           await loginGitHub(code, redirectUri)
         }
-        navigate('/app', { replace: true })
+        navigate('/', { replace: true })
       } catch (error) {
         toast.error(getApiErrorMessage(error, `${provider} login failed`))
         navigate('/login', { replace: true })

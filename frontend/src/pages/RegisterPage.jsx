@@ -31,7 +31,7 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       await register(form.email, form.username, form.password, form.password2)
-      navigate('/app')
+      navigate('/')
     } catch (err) {
       toast.error(getApiErrorMessage(err, 'Registration failed'))
     } finally {

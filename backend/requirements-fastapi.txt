@@ -1,17 +1,24 @@
 fastapi==0.109
 uvicorn==0.27
 python-multipart==0.0.9
-aiofiles==23.2
+aiofiles==24.1.0
 python-dotenv==1.0
 celery==5.3
 redis==5.0
 django==4.2
 djangorestframework==3.14
 djangorestframework-simplejwt==5.3
-psycopg2-binary==2.9
+psycopg2-binary==2.9.9
 requests==2.31
+
+# Ensure CPU torch wheels resolve consistently on cloud Linux hosts.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.2.2+cpu
+torchvision==0.17.2+cpu
+
 ultralytics==8.1
 numpy>=1.22,<1.27
 opencv-python-headless>=4.9,<5
 pandas==2.2
 pyyaml==6.0
+imageio-ffmpeg==0.5.1

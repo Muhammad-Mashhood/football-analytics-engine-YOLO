@@ -38,6 +38,13 @@ class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer
 
 
+class HealthView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        return Response({'status': 'ok'})
+
+
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]

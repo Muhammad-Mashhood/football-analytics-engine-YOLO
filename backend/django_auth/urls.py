@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenBlacklistView,
 )
-from accounts.views import RegisterView, MeView, GoogleOAuthView, GitHubOAuthView, EmailTokenObtainPairView
+from accounts.views import RegisterView, MeView, GoogleOAuthView, GitHubOAuthView, EmailTokenObtainPairView, HealthView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/auth/login/', EmailTokenObtainPairView.as_view()),
     path('api/auth/refresh/', TokenRefreshView.as_view()),
     path('api/auth/logout/', TokenBlacklistView.as_view()),
+    path('api/auth/health/', HealthView.as_view()),
     path('api/auth/me/', MeView.as_view()),
     path('api/auth/google/', GoogleOAuthView.as_view()),
     path('api/auth/github/', GitHubOAuthView.as_view()),

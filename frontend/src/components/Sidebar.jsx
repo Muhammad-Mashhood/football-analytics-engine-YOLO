@@ -3,10 +3,10 @@ import { useAuthStore } from '../store/authStore'
 import { LayoutDashboard, Upload, Cpu, Settings, Zap, HelpCircle, LogOut } from 'lucide-react'
 
 const links = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/analyze', label: 'Uploads', icon: Upload },
-  { to: '/models', label: 'Models', icon: Cpu },
-  { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/app', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/app/analyze', label: 'Uploads', icon: Upload },
+  { to: '/app/models', label: 'Models', icon: Cpu },
+  { to: '/app/settings', label: 'Settings', icon: Settings },
 ]
 
 export default function Sidebar() {
@@ -21,7 +21,7 @@ export default function Sidebar() {
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-bg border-r border-border-medium flex-col z-40">
       <div className="p-4 pb-8">
-        <div className="font-heading font-bold text-accent text-xl tracking-tight mb-4">SyntheticPitch</div>
+        <div className="font-heading font-bold text-accent text-xl tracking-tight mb-4">FieldVision</div>
         {user && (
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded bg-bg-muted flex items-center justify-center text-accent font-bold text-sm">
@@ -40,7 +40,7 @@ export default function Sidebar() {
           <NavLink
             key={to}
             to={to}
-            end={to === '/'}
+            end={to === '/app'}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded text-sm font-medium transition-colors ${
                 isActive
@@ -57,7 +57,7 @@ export default function Sidebar() {
 
       <div className="border-t border-border-medium p-4 flex flex-col gap-2">
         <button
-          onClick={() => navigate('/analyze')}
+          onClick={() => navigate('/app/analyze')}
           className="w-full py-3 rounded text-sm font-bold text-[#f5fff6] bg-btn-primary flex items-center justify-center gap-2 shadow-glow-green hover:opacity-90 transition-opacity"
         >
           <Zap size={16} />

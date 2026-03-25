@@ -31,7 +31,7 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       await register(form.email, form.username, form.password, form.password2)
-      navigate('/')
+      navigate('/app')
     } catch (err) {
       toast.error(getApiErrorMessage(err, 'Registration failed'))
     } finally {
@@ -52,7 +52,7 @@ export default function RegisterPage() {
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative w-full max-w-md">
         <div className="text-center mb-10">
-          <h1 className="font-heading font-bold text-accent text-3xl tracking-tight mb-2">SyntheticPitch</h1>
+          <h1 className="font-heading font-bold text-accent text-3xl tracking-tight mb-2">FieldVision</h1>
           <p className="text-text-secondary text-sm uppercase tracking-widest">Request System Access</p>
         </div>
 

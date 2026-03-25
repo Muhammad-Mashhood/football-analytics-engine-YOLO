@@ -53,7 +53,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(email, password)
-      navigate('/')
+      navigate('/app')
     } catch (err) {
       toast.error(getApiErrorMessage(err, 'Invalid credentials'))
     } finally {
@@ -80,7 +80,7 @@ export default function LoginPage() {
         className="relative w-full max-w-md"
       >
         <div className="text-center mb-10">
-          <h1 className="font-heading font-bold text-accent text-3xl tracking-tight mb-2">SyntheticPitch</h1>
+          <h1 className="font-heading font-bold text-accent text-3xl tracking-tight mb-2">FieldVision</h1>
           <p className="text-text-secondary text-sm uppercase tracking-widest">Tactical HUD Engine</p>
         </div>
 

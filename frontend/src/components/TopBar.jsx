@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Bell, User, Search } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -7,17 +7,17 @@ import api from '../lib/api'
 import { useAuthStore } from '../store/authStore'
 
 const pageTitles = {
-  '/': 'Dashboard',
-  '/analyze': 'Video Processing Unit',
-  '/models': 'Model Management',
-  '/settings': 'Settings',
+  '/app': 'Dashboard',
+  '/app/analyze': 'Video Processing Unit',
+  '/app/models': 'Model Management',
+  '/app/settings': 'Settings',
 }
 
 export default function TopBar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
-  const title = pageTitles[pathname] || (pathname.startsWith('/results/') ? 'Results' : 'Dashboard')
+  const title = pageTitles[pathname] || (pathname.startsWith('/app/results/') ? 'Results' : 'Dashboard')
   const [panelOpen, setPanelOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const [notifications, setNotifications] = useState([])
@@ -78,7 +78,28 @@ export default function TopBar() {
 
   return (
     <header className="h-16 bg-bg border-b border-border-medium flex items-center justify-between px-4 lg:px-8 shadow-[0_24px_48px_rgba(0,0,0,0.4)] z-30 shrink-0">
-      <h1 className="font-heading font-bold text-text-primary text-xl tracking-tight">{title}</h1>
+      <div className="flex items-center gap-8">
+        <h1 className="font-heading font-bold text-text-primary text-xl tracking-tight">{title}</h1>
+        <nav className="hidden xl:flex items-center gap-6 text-sm">
+          {[
+            ['/app', 'Dashboard'],
+            ['/app/analyze', 'Uploads'],
+            ['/app/models', 'Models'],
+            ['/app/settings', 'Settings'],
+          ].map(([to, label]) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/app'}
+              className={({ isActive }) =>
+                `transition-colors ${isActive ? 'text-accent font-semibold' : 'text-text-secondary hover:text-text-primary'}`
+              }
+            >
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
 
       <div className="flex items-center gap-4 relative">
         <div className="hidden md:flex items-center gap-2 bg-bg-dark border border-border-strong rounded-xl px-3 py-1.5">
@@ -110,7 +131,7 @@ export default function TopBar() {
                 <button
                   key={n.id}
                   onClick={() => {
-                    navigate(`/results/${n.jobId}`)
+                    navigate(`/app/results/${n.jobId}`)
                     setPanelOpen(false)
                   }}
                   className="w-full text-left px-4 py-3 border-b border-border-default hover:bg-green-dim transition-colors"

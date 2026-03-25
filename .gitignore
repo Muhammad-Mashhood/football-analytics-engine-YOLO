@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+env/
+.venv/
+
+# Environment secrets
+.env
+.env.*
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Generated artifacts
+outputs/
+uploads/
+backend/uploads/
+backend/outputs/
+
+# VS Code local settings
+.vscode/

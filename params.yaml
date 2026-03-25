@@ -1,0 +1,34 @@
+data:
+  train_split: 0.8
+  val_split:   0.1
+  test_split:  0.1
+  num_classes: 3
+  class_names:
+    - player
+    - referee
+    - ball
+
+train:
+  model:   yolo26l.pt
+  epochs:  15
+  imgsz:   640
+  batch:   8
+  augment: false
+
+mlflow:
+  experiment_name: football-player-detection
+  tracking_uri:    https://dagshub.com/muhammad-mashhood/football-analytics-engine.mlflow
+  model_name:      football-detector
+
+tracker:
+  max_age:    30
+  n_init:     3
+  nn_budget:  100
+  conf_threshold: 0.3
+
+team_classifier:
+  n_clusters: 2
+  min_frames: 5
+
+possession:
+  ball_proximity_px: 80

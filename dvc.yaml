@@ -1,0 +1,53 @@
+stages:
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/processed
+      - params.yaml
+    params:
+      - params.yaml:
+          - train.model
+          - train.epochs
+          - train.imgsz
+          - train.batch
+          - train.augment
+    outs:
+      - models/best_overall.pt
+    metrics:
+      - metrics/train_results.json:
+          cache: false
+
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - models/best_overall.pt
+      - data/processed
+      - params.yaml
+    metrics:
+      - metrics/eval_results.json:
+          cache: false
+    plots:
+      - metrics/confusion_matrix.png:
+          cache: false
+      - metrics/PR_curve.png:
+          cache: false
+
+  track:
+    cmd: python src/track.py
+    deps:
+      - src/track.py
+      - models/best_overall.pt
+      - params.yaml
+    params:
+      - params.yaml:
+          - tracker.max_age
+          - tracker.n_init
+          - tracker.conf_threshold
+          - team_classifier.n_clusters
+          - possession.ball_proximity_px
+    outs:
+      - outputs/:
+          cache: false

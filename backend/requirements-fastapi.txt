@@ -1,3 +1,4 @@
+setuptools>=65.0
 fastapi==0.109
 uvicorn==0.27
 python-multipart==0.0.9
@@ -8,7 +9,7 @@ redis==5.0
 django==4.2
 djangorestframework==3.14
 djangorestframework-simplejwt==5.3
-psycopg2-binary==2.9.9
+psycopg2==2.9.9
 requests==2.31
 
 # Ensure CPU torch wheels resolve consistently on cloud Linux hosts.

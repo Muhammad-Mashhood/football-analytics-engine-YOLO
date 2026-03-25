@@ -1,9 +1,10 @@
+setuptools>=65.0
 django==4.2
 djangorestframework==3.14
 django-allauth==0.61
 djangorestframework-simplejwt==5.3
 django-cors-headers==4.3
-psycopg2-binary==2.9
+psycopg2==2.9.9
 python-dotenv==1.0
 celery==5.3
 redis==5.0

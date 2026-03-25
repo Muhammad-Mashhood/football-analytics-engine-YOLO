@@ -1,0 +1,121 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB:       ${DB_NAME}
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  django:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.django
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      REDIS_URL: redis://redis:6379/0
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,${EC2_PUBLIC_IP}"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./outputs:/app/outputs
+      - ./models:/app/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/auth/health/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn django_auth.wsgi:application
+             --bind 0.0.0.0:8000 --workers 2 --timeout 120"
+
+  fastapi:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.fastapi
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./uploads:/app/uploads
+      - ./outputs:/app/outputs
+      - ./models:/app/models
+      - ./src:/app/src
+      - ./params.yaml:/app/params.yaml
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.fastapi
+    env_file: .env
+    environment:
+      DB_HOST: postgres
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./uploads:/app/uploads
+      - ./outputs:/app/outputs
+      - ./models:/app/models
+      - ./src:/app/src
+      - ./params.yaml:/app/params.yaml
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    command: >
+      celery -A celery_app worker
+      --loglevel=info --concurrency=1
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - django
+      - fastapi
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

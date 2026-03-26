@@ -43,16 +43,25 @@ export const useAuthStore = create(
       },
 
       logout: async () => {
+        const refreshToken = get().refresh
+        // Clear local session first so interceptor won't attempt token refresh loops.
+        set({ user: null, token: null, refresh: null })
+
+        if (!refreshToken) return
         try {
-          await api.post('/api/auth/logout/', { refresh: get().refresh })
+          await api.post('/api/auth/logout/', { refresh: refreshToken })
         } catch {
           // ignore logout API failures
         }
-        set({ user: null, token: null, refresh: null })
       },
 
       refreshToken: async () => {
-        const res = await api.post('/api/auth/refresh/', { refresh: get().refresh })
+        const refreshToken = get().refresh
+        if (!refreshToken) {
+          throw new Error('No refresh token available')
+        }
+
+        const res = await api.post('/api/auth/refresh/', { refresh: refreshToken })
         set({ token: res.data.access })
         return res.data.access
       },

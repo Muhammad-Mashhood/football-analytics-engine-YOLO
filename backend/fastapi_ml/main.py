@@ -56,6 +56,11 @@ async def health():
     return {'status': 'ok', 'service': 'football-analytics-ml'}
 
 
+@app.get('/api/ml/health')
+async def health_api():
+    return {'status': 'ok', 'service': 'football-analytics-ml'}
+
+
 @app.post('/api/ml/analyze')
 async def analyze_video(file: UploadFile = File(...), current_user=Depends(get_current_user)):
     if not file.filename.lower().endswith(('.mp4', '.avi', '.mov', '.mkv')):

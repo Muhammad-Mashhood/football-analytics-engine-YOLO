@@ -45,6 +45,21 @@ class HealthView(APIView):
         return Response({'status': 'ok'})
 
 
+class AuthConfigView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        return Response(
+            {
+                'google_client_id': os.getenv('GOOGLE_CLIENT_ID') or '',
+                'github_client_id': os.getenv('GITHUB_CLIENT_ID') or '',
+                # Use request host so callbacks survive EC2 public IP changes.
+                'google_redirect_uri': request.build_absolute_uri('/auth/google/callback'),
+                'github_redirect_uri': request.build_absolute_uri('/auth/github/callback'),
+            }
+        )
+
+
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]

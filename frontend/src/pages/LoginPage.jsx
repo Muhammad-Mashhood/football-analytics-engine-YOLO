@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '../store/authStore'
+import api from '../lib/api'
 
 function getApiErrorMessage(err, fallback) {
   const data = err?.response?.data
@@ -22,10 +24,18 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const { login } = useAuthStore()
   const navigate = useNavigate()
-  const githubClientId = import.meta.env.VITE_GITHUB_CLIENT_ID
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-  const googleRedirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/auth/google/callback`
-  const githubRedirectUri = import.meta.env.VITE_GITHUB_REDIRECT_URI || `${window.location.origin}/auth/github/callback`
+  const { data: authConfig } = useQuery({
+    queryKey: ['auth-config'],
+    queryFn: () => api.get('/api/auth/config/').then((r) => r.data),
+    retry: 1,
+  })
+
+  const githubClientId = authConfig?.github_client_id || import.meta.env.VITE_GITHUB_CLIENT_ID
+  const googleClientId = authConfig?.google_client_id || import.meta.env.VITE_GOOGLE_CLIENT_ID
+  const googleRedirectUri =
+    authConfig?.google_redirect_uri || import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/auth/google/callback`
+  const githubRedirectUri =
+    authConfig?.github_redirect_uri || import.meta.env.VITE_GITHUB_REDIRECT_URI || `${window.location.origin}/auth/github/callback`
   const hasGitHubOAuth = !!githubClientId
   const hasGoogleOAuth = !!googleClientId
 

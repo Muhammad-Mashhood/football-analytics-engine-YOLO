@@ -32,7 +32,7 @@ export default function DashboardPage() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
 
-  const { data: jobs = [], isLoading } = useQuery({
+  const { data: jobs = [], isLoading, isError } = useQuery({
     queryKey: ['jobs', user?.id],
     queryFn: () => api.get('/api/jobs/').then((r) => r.data),
     enabled: !!user,
@@ -89,6 +89,11 @@ export default function DashboardPage() {
 
         {isLoading ? (
           <div className="py-16 text-center text-text-secondary text-sm">Loading sessions...</div>
+        ) : isError ? (
+          <div className="py-16 text-center">
+            <p className="text-error text-sm">Could not load session history.</p>
+            <p className="text-text-secondary text-xs mt-2">Please refresh or try again in a few seconds.</p>
+          </div>
         ) : jobs.length === 0 ? (
           <div className="py-16 text-center">
             <Upload size={32} className="text-[rgba(226,227,224,0.2)] mx-auto mb-3" />

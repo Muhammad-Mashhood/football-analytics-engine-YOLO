@@ -14,7 +14,7 @@ env/
 
 # Node
 frontend/node_modules/
-frontend/dist/
+# frontend/dist/  — REMOVED: dist is now committed to git (pre-built locally)
 
 # Generated artifacts
 outputs/

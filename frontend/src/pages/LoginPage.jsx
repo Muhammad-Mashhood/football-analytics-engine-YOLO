@@ -91,18 +91,18 @@ export default function LoginPage() {
         animate={{ opacity: 1, y: 0 }}
         className="relative mx-auto flex min-h-screen w-full max-w-xl flex-col items-center justify-center px-2 pt-20"
       >
-        <div className="mb-10 w-full text-center">
+        <div className="mb-6 w-full text-center">
           <h1 className="font-heading font-bold text-accent text-3xl tracking-tight mb-2">FieldVision</h1>
           <p className="text-text-secondary text-sm uppercase tracking-widest">Tactical HUD Engine</p>
         </div>
 
-        <div className="w-full bg-bg-card border border-border-medium rounded-lg p-8">
-          <div className="flex items-center gap-2 mb-6">
+        <div className="w-full bg-bg-card border border-border-medium rounded-lg p-6">
+          <div className="mb-4 flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-accent" />
             <span className="text-text-secondary text-xs uppercase tracking-widest font-bold">Secure Access</span>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <div>
               <label className="text-[10px] text-text-secondary uppercase tracking-widest block mb-2">Email</label>
               <input
@@ -110,7 +110,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-bg-dark border border-border-strong rounded px-4 py-3 text-text-primary text-sm outline-none focus:border-green-dim3 transition-colors placeholder-[#6b7280]"
+                className="w-full bg-bg-dark border border-border-strong rounded px-4 py-2 text-text-primary text-sm outline-none focus:border-green-dim3 transition-colors placeholder-[#6b7280]"
                 placeholder="analyst@club.com"
               />
             </div>
@@ -121,7 +121,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full bg-bg-dark border border-border-strong rounded px-4 py-3 text-text-primary text-sm outline-none focus:border-green-dim3 transition-colors"
+                className="w-full bg-bg-dark border border-border-strong rounded px-4 py-2 text-text-primary text-sm outline-none focus:border-green-dim3 transition-colors"
                 placeholder="••••••••"
               />
             </div>
@@ -129,13 +129,13 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded font-bold text-[#f5fff6] bg-btn-primary shadow-glow-green hover:opacity-90 transition-opacity mt-2 disabled:opacity-50"
+              className="mt-1 w-full rounded bg-btn-primary py-2 font-bold text-[#f5fff6] shadow-glow-green transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {loading ? 'Authenticating...' : 'Access System'}
             </button>
           </form>
 
-          <div className="flex items-center gap-4 my-6">
+          <div className="my-4 flex items-center gap-4">
             <div className="flex-1 h-px bg-border-medium" />
             <span className="text-[10px] text-text-muted uppercase tracking-widest">or</span>
             <div className="flex-1 h-px bg-border-medium" />

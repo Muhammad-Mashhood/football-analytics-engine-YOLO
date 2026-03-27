@@ -55,15 +55,15 @@ export default function RegisterPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative mx-auto flex min-h-screen w-full max-w-lg flex-col items-center justify-center pt-20"
+        className="relative mx-auto flex min-h-screen w-full max-w-xl flex-col items-center justify-center px-2 pt-20"
       >
-        <div className="text-center mb-10">
+        <div className="mb-6 w-full text-center">
           <h1 className="font-heading font-bold text-accent text-3xl tracking-tight mb-2">FieldVision</h1>
           <p className="text-text-secondary text-sm uppercase tracking-widest">Request System Access</p>
         </div>
 
-        <div className="bg-bg-card border border-border-medium rounded-lg p-8">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="w-full bg-bg-card border border-border-medium rounded-lg p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             {[
               { key: 'email', label: 'Email', type: 'email', ph: 'analyst@club.com' },
               { key: 'username', label: 'Username', type: 'text', ph: 'tactician_01' },
@@ -78,7 +78,7 @@ export default function RegisterPage() {
                   onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value }))}
                   required
                   placeholder={ph}
-                  className="w-full bg-bg-dark border border-border-strong rounded px-4 py-3 text-text-primary text-sm outline-none focus:border-green-dim3 transition-colors placeholder-[#6b7280]"
+                  className="w-full bg-bg-dark border border-border-strong rounded px-4 py-2 text-text-primary text-sm outline-none focus:border-green-dim3 transition-colors placeholder-[#6b7280]"
                 />
               </div>
             ))}
@@ -86,14 +86,14 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded font-bold text-[#f5fff6] bg-btn-primary shadow-glow-green hover:opacity-90 transition-opacity mt-2 disabled:opacity-50"
+              className="mt-1 w-full rounded bg-btn-primary py-2 font-bold text-[#f5fff6] shadow-glow-green transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {loading ? 'Creating Access...' : 'Create Account'}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-text-muted text-xs mt-6">
+        <p className="mt-5 w-full text-center text-text-muted text-xs">
           Already have access?{' '}
           <Link to="/login" className="text-accent hover:underline">
             Sign in

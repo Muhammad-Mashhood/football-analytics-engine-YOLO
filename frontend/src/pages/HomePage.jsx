@@ -1,4 +1,5 @@
 import PublicNavbar from '../components/PublicNavbar'
+import landingImage from '../assets/landing-gemini.png'
 
 export default function HomePage() {
   return (
@@ -9,7 +10,7 @@ export default function HomePage() {
         <section id="home" className="relative min-h-screen">
           <div className="absolute inset-0">
             <img
-              src="/landing-gemini.png"
+              src={landingImage}
               alt="Football analytics hero"
               className="h-full w-full object-cover object-[center_58%]"
             />
@@ -28,17 +29,6 @@ export default function HomePage() {
             The platform combines computer vision and practical football analytics to turn raw video into tactical
             insight you can use for team review, opposition analysis, and performance improvement.
           </p>
-        </section>
-
-        <section id="upload" className="mx-auto max-w-6xl px-4 pb-14 md:px-8">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
-            <Link
-              to={token ? '/app/analyze' : '/login'}
-              className="inline-flex rounded-full bg-[#19ff75] px-8 py-3 font-semibold text-[#03200f] transition-opacity hover:opacity-90"
-            >
-              Upload Match Video
-            </Link>
-          </div>
         </section>
 
         <section id="pricing" className="mx-auto max-w-6xl px-4 pb-20 md:px-8">

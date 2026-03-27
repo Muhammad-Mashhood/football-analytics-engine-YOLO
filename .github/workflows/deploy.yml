@@ -1,0 +1,47 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: |
+          ssh ubuntu@${{ secrets.EC2_IP }} << 'EOF'
+            set -e
+            cd ~/football-analytics-engine
+
+            echo "Pulling latest code..."
+            git pull origin main
+
+            echo "Rebuilding containers..."
+            docker compose build --no-cache frontend django fastapi
+
+            echo "Restarting services..."
+            docker compose up -d --no-deps frontend
+            sleep 8
+            docker compose up -d --no-deps django
+            sleep 12
+            docker compose up -d --no-deps fastapi
+            sleep 8
+            docker compose up -d --no-deps celery
+
+            echo "Health check..."
+            curl -f http://localhost/health
+
+            echo "Deploy complete"
+            docker compose ps
+          EOF

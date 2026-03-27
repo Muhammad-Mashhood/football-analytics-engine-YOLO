@@ -27,36 +27,19 @@ export default function HomePage() {
         </header>
 
         <div className="relative max-w-7xl mx-auto px-5 pt-14 pb-24 text-center">
-          <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-border-strong bg-[rgba(17,22,20,0.7)] text-[10px] tracking-[0.22em] uppercase text-text-secondary">
-            Tactical HUD Active
-          </span>
           <h2 className="mt-8 font-heading font-bold text-5xl md:text-7xl leading-[0.95]">
-            Elite Performance,
+            Match Insights,
             <br />
-            <span className="text-accent italic">Decoded</span>
+            <span className="text-accent italic">Made Simple</span>
           </h2>
           <p className="mt-6 max-w-3xl mx-auto text-lg text-text-secondary">
-            Transform raw match footage into tactical intelligence. Neural models extract every movement, pass,
-            and pressing trigger with sub-second latency.
+            Upload a match video and get player tracks, possession stats, heatmaps, and processed output clips
+            in one dashboard.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Link to={token ? '/app/analyze' : '/login'} className="px-9 py-3 rounded-lg font-bold text-[#031a0b] bg-btn-primary shadow-glow-green hover:opacity-90">
               Get Started
             </Link>
-            <Link to={token ? '/app/analyze' : '/login'} className="px-9 py-3 rounded-lg font-semibold border border-border-strong bg-[rgba(20,24,22,0.75)] hover:bg-green-dim transition-colors">
-              Watch Demo
-            </Link>
-          </div>
-
-          <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto text-left">
-            <div className="rounded-lg border border-border-default bg-[rgba(14,19,17,0.8)] px-4 py-3">
-              <p className="text-[9px] uppercase tracking-[0.2em] text-accent">Engine State</p>
-              <p className="text-sm mt-1">FieldVision_v1.0</p>
-            </div>
-            <div className="rounded-lg border border-border-default bg-[rgba(14,19,17,0.8)] px-4 py-3">
-              <p className="text-[9px] uppercase tracking-[0.2em] text-accent">System Latency</p>
-              <p className="text-sm mt-1">14ms_RTP</p>
-            </div>
           </div>
         </div>
       </section>

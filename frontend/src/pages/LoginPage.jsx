@@ -89,14 +89,14 @@ export default function LoginPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative mx-auto flex min-h-screen w-full max-w-md items-center pt-20"
+        className="relative mx-auto flex min-h-screen w-full max-w-xl flex-col items-center justify-center px-2 pt-20"
       >
-        <div className="text-center mb-10">
+        <div className="mb-10 w-full text-center">
           <h1 className="font-heading font-bold text-accent text-3xl tracking-tight mb-2">FieldVision</h1>
           <p className="text-text-secondary text-sm uppercase tracking-widest">Tactical HUD Engine</p>
         </div>
 
-        <div className="bg-bg-card border border-border-medium rounded-lg p-8">
+        <div className="w-full bg-bg-card border border-border-medium rounded-lg p-8">
           <div className="flex items-center gap-2 mb-6">
             <div className="w-2 h-2 rounded-full bg-accent" />
             <span className="text-text-secondary text-xs uppercase tracking-widest font-bold">Secure Access</span>
@@ -178,7 +178,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <p className="text-center text-text-muted text-xs mt-6">
+        <p className="mt-6 w-full text-center text-text-muted text-xs">
           No account?{' '}
           <Link to="/register" className="text-accent hover:underline">
             Register access

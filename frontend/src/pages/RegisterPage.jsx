@@ -55,7 +55,7 @@ export default function RegisterPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative mx-auto flex min-h-screen w-full max-w-md items-center pt-20"
+        className="relative mx-auto flex min-h-screen w-full max-w-lg flex-col items-center justify-center pt-20"
       >
         <div className="text-center mb-10">
           <h1 className="font-heading font-bold text-accent text-3xl tracking-tight mb-2">FieldVision</h1>

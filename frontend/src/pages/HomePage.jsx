@@ -1,21 +1,36 @@
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import PublicNavbar from '../components/PublicNavbar'
 import landingImage from '../assets/landing-gemini.png'
 
 export default function HomePage() {
+  const { hash } = useLocation()
+
+  useEffect(() => {
+    if (!hash) return
+
+    const target = document.querySelector(hash)
+    if (!target) return
+
+    requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }, [hash])
+
   return (
     <div className="min-h-screen bg-[#060808] text-text-primary">
       <PublicNavbar />
 
       <main>
-        <section id="home" className="relative min-h-screen">
+        <section id="home" className="relative h-screen min-h-screen">
           <div className="absolute inset-0">
             <img
               src={landingImage}
               alt="Football analytics hero"
-              className="h-full w-full object-cover object-[center_58%]"
+              className="h-full w-full object-cover object-top"
             />
           </div>
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.04)_0%,rgba(0,0,0,0.16)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02)_0%,rgba(0,0,0,0.08)_100%)]" />
         </section>
 
         <section id="about" className="mx-auto max-w-6xl px-4 pb-16 pt-16 md:px-8">

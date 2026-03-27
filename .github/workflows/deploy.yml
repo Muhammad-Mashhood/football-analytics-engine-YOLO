@@ -14,16 +14,25 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Set up SSH
+      - name: Validate required secrets
+        shell: bash
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts
+          set -euo pipefail
+          test -n "${{ secrets.EC2_IP }}"
+          test -n "${{ secrets.EC2_SSH_KEY }}"
+
+      - name: Set up SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          echo "${{ secrets.EC2_SSH_KEY }}" | tr -d '\r' > "$HOME/.ssh/id_rsa"
+          chmod 600 "$HOME/.ssh/id_rsa"
 
       - name: Deploy
+        shell: bash
         run: |
-          ssh ubuntu@${{ secrets.EC2_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${{ secrets.EC2_IP }} << 'EOF'
             set -e
             cd ~/football-analytics-engine
 
@@ -34,27 +43,27 @@ jobs:
             docker compose build --no-cache frontend django fastapi
 
             echo "Restarting services..."
-            docker compose up -d --no-deps frontend
-            sleep 8
             docker compose up -d --no-deps django
             sleep 12
             docker compose up -d --no-deps fastapi
             sleep 8
             docker compose up -d --no-deps celery
+            sleep 5
+            docker compose up -d --no-deps frontend
 
-            echo "Health check..."
-            for i in {1..12}; do
-              if curl -fsS http://localhost/health > /dev/null; then
-                echo "Health check passed"
+            echo "Health checks..."
+            for i in {1..24}; do
+              if curl -fsS http://localhost/api/auth/health/ > /dev/null && curl -fsS http://localhost/api/ml/health > /dev/null; then
+                echo "Auth + ML health checks passed"
                 break
               fi
-              if [ "$i" -eq 12 ]; then
+              if [ "$i" -eq 24 ]; then
                 echo "Health check failed after retries"
                 docker compose ps
-                docker compose logs --tail=200 nginx django fastapi celery
+                docker compose logs --tail=300 frontend django fastapi celery
                 exit 1
               fi
-              sleep 5
+              sleep 10
             done
 
             echo "Deploy complete"

@@ -1,5 +1,8 @@
 name: Deploy to EC2
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     branches: [main, master]
@@ -9,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up SSH
         run: |
@@ -40,7 +43,19 @@ jobs:
             docker compose up -d --no-deps celery
 
             echo "Health check..."
-            curl -f http://localhost/health
+            for i in {1..12}; do
+              if curl -fsS http://localhost/health > /dev/null; then
+                echo "Health check passed"
+                break
+              fi
+              if [ "$i" -eq 12 ]; then
+                echo "Health check failed after retries"
+                docker compose ps
+                docker compose logs --tail=200 nginx django fastapi celery
+                exit 1
+              fi
+              sleep 5
+            done
 
             echo "Deploy complete"
             docker compose ps

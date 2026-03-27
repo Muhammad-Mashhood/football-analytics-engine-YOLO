@@ -1,10 +1,6 @@
-import { Link } from 'react-router-dom'
-import { useAuthStore } from '../store/authStore'
 import PublicNavbar from '../components/PublicNavbar'
 
 export default function HomePage() {
-  const token = useAuthStore((s) => s.token)
-
   return (
     <div className="min-h-screen bg-[#060808] text-text-primary">
       <PublicNavbar />
@@ -15,18 +11,10 @@ export default function HomePage() {
             <img
               src="/landing-gemini.png"
               alt="Football analytics hero"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-[center_58%]"
             />
           </div>
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.28)_20%,rgba(0,0,0,0.82)_100%)]" />
-          <div className="relative mx-auto flex min-h-screen max-w-6xl items-end px-4 pb-14 md:px-8">
-            <Link
-              to={token ? '/app/analyze' : '/login'}
-              className="inline-flex rounded-full border border-white/30 bg-white/10 px-8 py-3 font-semibold text-white backdrop-blur-md transition-opacity hover:opacity-90"
-            >
-              Start Uploading
-            </Link>
-          </div>
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.04)_0%,rgba(0,0,0,0.16)_100%)]" />
         </section>
 
         <section id="about" className="mx-auto max-w-6xl px-4 pb-16 pt-16 md:px-8">
@@ -97,7 +85,7 @@ export default function HomePage() {
             <p>
               Developed by Mashhood | GitHub:{' '}
               <a
-                href="https://github.com/Muhammad-Mashhood"
+                href="https://github.com/Muhammad-Mashhood/"
                 target="_blank"
                 rel="noreferrer"
                 className="text-white/85 transition-colors hover:text-white"

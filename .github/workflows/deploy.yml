@@ -32,8 +32,9 @@ jobs:
       - name: Deploy
         shell: bash
         run: |
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${{ secrets.EC2_IP }} << 'EOF'
-            set -e
+          set -euo pipefail
+          ssh -T -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${{ secrets.EC2_IP }} << 'EOF'
+            set -euo pipefail
             cd ~/football-analytics-engine
 
             echo "Pulling latest code..."

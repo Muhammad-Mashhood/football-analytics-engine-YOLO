@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '../store/authStore'
 import api from '../lib/api'
+import PublicNavbar from '../components/PublicNavbar'
 
 function getApiErrorMessage(err, fallback) {
   const data = err?.response?.data
@@ -72,7 +73,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center relative overflow-hidden px-4">
+    <div className="min-h-screen bg-bg relative overflow-hidden px-4">
+      <PublicNavbar />
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -87,7 +89,7 @@ export default function LoginPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative w-full max-w-md"
+        className="relative mx-auto flex min-h-screen w-full max-w-md items-center pt-20"
       >
         <div className="text-center mb-10">
           <h1 className="font-heading font-bold text-accent text-3xl tracking-tight mb-2">FieldVision</h1>

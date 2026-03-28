@@ -80,12 +80,19 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-CORS_ALLOWED_ORIGINS = [
+_default_cors_origins = [
     'http://localhost:5173',
     'http://localhost:3000',
-    'http://13.127.219.105:5173',
-    'http://13.127.219.105:3000',
 ]
+_ec2_ip = os.getenv('EC2_PUBLIC_IP', '').strip()
+if _ec2_ip:
+    _default_cors_origins.extend([f'http://{_ec2_ip}:5173', f'http://{_ec2_ip}:3000'])
+
+_raw_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', '')
+if _raw_cors_origins.strip():
+    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _raw_cors_origins.split(',') if origin.strip()]
+else:
+    CORS_ALLOWED_ORIGINS = _default_cors_origins
 CORS_ALLOW_CREDENTIALS = True
 
 AUTHENTICATION_BACKENDS = [

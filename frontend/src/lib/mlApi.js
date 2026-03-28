@@ -6,7 +6,8 @@ import { useAuthStore } from '../store/authStore'
  * Separate from the Django REST API client so each can have its own baseURL.
  */
 const mlApi = axios.create({
-  baseURL: import.meta.env.VITE_ML_URL ?? 'http://localhost:8001',
+  // Empty baseURL = same origin in production (nginx → FastAPI). Local dev: set VITE_ML_URL=http://localhost:8001
+  baseURL: import.meta.env.VITE_ML_URL ?? '',
 })
 
 mlApi.interceptors.request.use((config) => {

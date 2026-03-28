@@ -35,6 +35,17 @@ UPLOAD_DIR = _resolve_project_path(os.getenv('UPLOAD_DIR', 'uploads'))
 OUTPUT_DIR = _resolve_project_path(os.getenv('OUTPUT_DIR', 'outputs'))
 MAX_SIZE = int(os.getenv('MAX_VIDEO_SIZE_MB', 500)) * 1024 * 1024
 
+_default_origins = ['http://localhost:5173', 'http://localhost:3000']
+_ec2_ip = os.getenv('EC2_PUBLIC_IP', '').strip()
+if _ec2_ip:
+    _default_origins.extend([f'http://{_ec2_ip}:5173', f'http://{_ec2_ip}:3000'])
+
+_raw_origins = os.getenv('CORS_ALLOWED_ORIGINS', '').strip()
+if _raw_origins:
+    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _raw_origins.split(',') if origin.strip()]
+else:
+    CORS_ALLOWED_ORIGINS = _default_origins
+
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -42,7 +53,7 @@ app = FastAPI(title='Football Analytics ML API', version='1.0.0')
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://localhost:5173', 'http://localhost:3000', 'http://13.127.219.105:5173', 'http://13.127.219.105:3000'],
+    allow_origins=CORS_ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],

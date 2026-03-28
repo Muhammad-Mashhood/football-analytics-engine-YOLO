@@ -9,11 +9,16 @@ function getApiErrorMessage(err, fallback) {
   const data = err?.response?.data
   if (!data) return fallback
   if (typeof data === 'string') return data
-  if (data.detail) return data.detail
+  if (data.detail) return typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)
 
-  const firstEntry = Object.values(data)[0]
-  if (Array.isArray(firstEntry) && firstEntry[0]) return String(firstEntry[0])
-  if (typeof firstEntry === 'string') return firstEntry
+  const messages = []
+  const walk = (v) => {
+    if (typeof v === 'string') messages.push(v)
+    else if (Array.isArray(v)) v.forEach(walk)
+    else if (v && typeof v === 'object') Object.values(v).forEach(walk)
+  }
+  walk(data)
+  if (messages.length) return [...new Set(messages)].join(' ')
   return fallback
 }
 

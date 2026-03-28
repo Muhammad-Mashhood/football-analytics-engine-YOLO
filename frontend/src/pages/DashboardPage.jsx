@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { Upload, Plus } from 'lucide-react'
+import { Upload, Plus, Trash2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import api from '../lib/api'
 import { useAuthStore } from '../store/authStore'
 
@@ -31,12 +32,24 @@ function formatDuration(job) {
 export default function DashboardPage() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
+  const queryClient = useQueryClient()
 
   const { data: jobs = [], isLoading, isError } = useQuery({
-    queryKey: ['jobs', user?.id],
+    queryKey: ['jobs'],
     queryFn: () => api.get('/api/jobs/').then((r) => r.data),
     enabled: !!user,
     refetchInterval: 5000,
+    refetchOnMount: 'always',
+    staleTime: 0,
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (jobId) => api.delete(`/api/jobs/${jobId}/`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['jobs'] })
+      toast.success('Session removed')
+    },
+    onError: () => toast.error('Could not delete session'),
   })
 
   const stats = {
@@ -79,8 +92,8 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-6 px-6 py-3 bg-bg-dark">
-          {['Source File', 'Duration', 'Status', 'Timestamp', 'Action'].map((h) => (
+        <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-6 px-6 py-3 bg-bg-dark">
+          {['Source File', 'Duration', 'Status', 'Timestamp', 'Action', ''].map((h) => (
             <span key={h} className="text-[10px] text-text-secondary uppercase tracking-widest font-bold">
               {h}
             </span>
@@ -111,7 +124,7 @@ export default function DashboardPage() {
             return (
               <div
                 key={job.id}
-                className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-3 md:gap-6 px-4 md:px-6 py-4 items-center border-t border-border-default hover:bg-[rgba(25,255,117,0.05)] transition-colors"
+                className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] gap-3 md:gap-6 px-4 md:px-6 py-4 items-center border-t border-border-default hover:bg-[rgba(25,255,117,0.05)] transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-8 rounded bg-bg-muted flex items-center justify-center shrink-0">
@@ -134,13 +147,29 @@ export default function DashboardPage() {
 
                 <span className="text-text-secondary text-xs">{new Date(job.created_at).toLocaleDateString()}</span>
 
-                <div>
+                <div className="flex flex-wrap items-center gap-2">
                   {job.status === 'completed' && (
                     <button
+                      type="button"
                       onClick={() => navigate(`/app/results/${job.id}`)}
                       className="text-accent text-[10px] uppercase tracking-widest font-bold hover:underline"
                     >
                       View Analytics
+                    </button>
+                  )}
+                  {(job.status === 'completed' || job.status === 'failed' || job.status === 'queued') && (
+                    <button
+                      type="button"
+                      disabled={deleteMutation.isPending}
+                      onClick={() => {
+                        if (!window.confirm('Remove this session and its files from the server?')) return
+                        deleteMutation.mutate(job.id)
+                      }}
+                      className="inline-flex items-center gap-1 text-[#ffb4ab] text-[10px] uppercase tracking-widest font-bold hover:underline disabled:opacity-50"
+                      title="Delete session"
+                    >
+                      <Trash2 size={12} />
+                      Delete
                     </button>
                   )}
                 </div>

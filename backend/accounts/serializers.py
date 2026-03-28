@@ -16,6 +16,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'username', 'password', 'password2']
 
+    def validate_email(self, value):
+        email = (value or '').strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise serializers.ValidationError('A user with this email already exists.')
+        return email
+
     def validate(self, data):
         if data['password'] != data['password2']:
             raise serializers.ValidationError({'password': 'Passwords do not match'})
@@ -42,7 +48,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         try:
             return User.objects.create_user(**validated_data)
         except IntegrityError:
-            # Guard against rare race conditions between validation and insert.
+            # Race on email/username unique constraints
+            if User.objects.filter(email__iexact=validated_data.get('email', '')).exists():
+                raise serializers.ValidationError({'email': 'A user with this email already exists.'})
             raise serializers.ValidationError({'username': 'This username is already taken'})
 
 

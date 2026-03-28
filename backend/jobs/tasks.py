@@ -53,7 +53,10 @@ def run_analysis(self, job_id: str):
     from jobs.models import AnalysisJob
     from src.track import run_pipeline
 
-    job = AnalysisJob.objects.get(id=job_id)
+    try:
+        job = AnalysisJob.objects.get(id=job_id)
+    except AnalysisJob.DoesNotExist:
+        return {'status': 'cancelled', 'job_id': job_id}
     try:
         job.status = 'processing'
         job.started_at = timezone.now()

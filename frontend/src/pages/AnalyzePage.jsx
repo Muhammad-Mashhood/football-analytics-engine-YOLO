@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { useDropzone } from 'react-dropzone'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, CheckCircle, Cpu } from 'lucide-react'
@@ -11,6 +12,7 @@ export default function AnalyzePage() {
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const onDrop = useCallback((accepted) => {
     if (accepted[0]) setFile(accepted[0])
@@ -34,6 +36,7 @@ export default function AnalyzePage() {
           if (e.total) setProgress(Math.round((e.loaded / e.total) * 100))
         },
       })
+      await queryClient.invalidateQueries({ queryKey: ['jobs'] })
       toast.success('Video queued for processing')
       navigate(`/app/results/${res.data.job_id}`)
     } catch {

@@ -20,7 +20,11 @@ export const useAuthStore = create(
 
       register: async (email, username, password, password2) => {
         const res = await api.post('/api/auth/register/', { email, username, password, password2 })
-        set({ user: res.data.user, token: res.data.access, refresh: res.data.refresh })
+        const token = res.data.access
+        const refresh = res.data.refresh
+        set({ token, refresh })
+        const me = await api.get('/api/auth/me/')
+        set({ user: me.data, token, refresh })
       },
 
       loginGoogle: async (accessToken) => {
